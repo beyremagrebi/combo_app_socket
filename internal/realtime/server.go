@@ -49,6 +49,7 @@ func (s *Server) registerRoutes() {
 
 	s.registerInternalRoutes()
 	s.registerInternalMessageRoutes()
+	s.registerInternalDirectMessageRoutes()
 }
 
 func (s *Server) createSocketServer() *socket.Server {
