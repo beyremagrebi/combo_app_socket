@@ -22,10 +22,11 @@ const (
 	EventDirectMessageReactionUpdated = "direct_message_reaction_updated"
 	EventDirectMessageDeleted         = "direct_message_deleted"
 
-	EventJoinTeamStream    = "join_team_stream"
-	EventLeaveTeamStream   = "leave_team_stream"
-	EventTeamStreamJoined  = "team_stream_joined"
-	EventUserStatusUpdated = "user_status_updated"
+	EventJoinTeamStream                = "join_team_stream"
+	EventLeaveTeamStream               = "leave_team_stream"
+	EventTeamStreamJoined              = "team_stream_joined"
+	EventUserStatusUpdated             = "user_status_updated"
+	EventWorkspaceUnreadMessageCreated = "workspace_unread_message_created"
 )
 
 func (s *Server) registerMessageEvents(client *socket.Socket) {
@@ -216,6 +217,7 @@ func (s *Server) EmitMessageDeleted(channelID string, messageID string) {
 
 	s.io.To(room).Emit(EventMessageDeleted, map[string]any{
 		"id":        messageID,
+		"messageId": messageID,
 		"channelId": channelID,
 	})
 
@@ -254,6 +256,14 @@ func (s *Server) EmitDirectMessageDeleted(conversationID string, messageID strin
 	})
 
 	log.Println("Direct message delete emitted to room:", string(room))
+}
+
+func (s *Server) EmitWorkspaceUnreadMessageCreated(teamID string, payload any) {
+	room := getMessageTeamRoom(teamID)
+
+	s.io.To(room).Emit(EventWorkspaceUnreadMessageCreated, payload)
+
+	log.Println("Workspace unread message emitted to team room:", string(room))
 }
 
 func getMessageRoom(channelID string) socket.Room {
